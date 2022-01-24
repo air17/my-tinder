@@ -1,6 +1,10 @@
-from django.contrib.auth.hashers import make_password
+import os.path
+from PIL import Image
+from django.contrib.auth.hashers import make_password, identify_hasher
 from django.contrib.auth.models import UserManager, AbstractUser
 from django.db import models
+
+from myTinder import settings
 
 
 class CustomUserManager(UserManager):
@@ -59,3 +63,32 @@ class User(AbstractUser):
     def __str__(self):
         return self.get_full_name()
 
+    def get_avatar_url(self) -> str:
+        if self.picture:
+            url = self.picture.url
+        else:
+            url = settings.MEDIA_URL + "user.png"
+        return url
+
+    def save(self, *args, **kwargs):
+        # hashing password when it is not hashed
+        try:
+            identify_hasher(self.password)
+        except ValueError:
+            self.password = make_password(self.password)
+
+        super(User, self).save(*args, **kwargs)
+
+        # editing picture
+        try:
+            picture_path = self.picture.path
+            self.add_watermark(picture_path)
+        except Exception as e:
+            print(f"Error adding watermark: {e}")
+
+    @staticmethod
+    def add_watermark(path):
+        img = Image.open(path)
+        watermark = Image.open(os.path.join("accounts", "watermark.webp"))
+        img.paste(watermark, (img.width-260, img.height-260), mask=watermark)
+        img.save(path)
