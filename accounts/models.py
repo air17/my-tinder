@@ -3,7 +3,7 @@ from PIL import Image
 from django.contrib.auth.hashers import make_password, identify_hasher
 from django.contrib.auth.models import UserManager, AbstractUser
 from django.db import models
-
+from model_utils.models import UUIDModel
 from myTinder import settings
 
 
@@ -41,7 +41,7 @@ class CustomUserManager(UserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class User(AbstractUser):
+class User(AbstractUser, UUIDModel):
     username = None
     email = models.EmailField(
         verbose_name='email address',
