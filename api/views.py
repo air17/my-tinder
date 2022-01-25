@@ -1,10 +1,15 @@
-from django.core.mail import send_mail, EmailMessage
+from django.contrib.auth import get_user_model
+from django.core.mail import EmailMessage
 from django.db import IntegrityError
+from django_filters import rest_framework as filters
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
-from accounts.models import User
 from api.models import Match
+from api.serializers import ThinUserSerializer
+
+User = get_user_model()
 
 
 def send_match_email(user1, user2):
@@ -23,20 +28,29 @@ def send_match_email(user1, user2):
 def match(request, pk, **kwargs):
     if request.user.is_anonymous:
         return Response({"text": "Log in, please!"}, status=status.HTTP_403_FORBIDDEN)
+
     user_from = User.objects.get(pk=request.user.id)
     user_to = User.objects.get(pk=pk)
+
     if user_from == user_to:
         return Response({"text": "You can't like yourself"}, status=status.HTTP_409_CONFLICT)
+
     try:
         Match.objects.create(user1=user_from, user2=user_to)
     except IntegrityError:
         return Response({"text": "You already liked this user"}, status=status.HTTP_409_CONFLICT)
     else:
-        is_match = Match.objects.filter(user1=user_to, user2=user_from)
-        if is_match:
+        matches = Match.objects.filter(user1=user_to, user2=user_from)
+        if matches:
             send_match_email(user_from, user_to)
             return Response({"match": True,
                              "text": f"It's a match! Their email: {user_to.email}"})
         else:
             return Response({"match": False,
                              "text": ""})
+
+
+class UserList(ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = ThinUserSerializer
+    filterset_fields = ('first_name', 'last_name', 'sex')
