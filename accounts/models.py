@@ -54,6 +54,8 @@ class User(AbstractUser, UUIDModel):
                                                   ('M', 'Male'),
                                                   ))
     picture = models.ImageField(blank=True, upload_to="photos/")
+    latitude = models.DecimalField(max_digits=22, decimal_places=16, blank=True, null=True)
+    longitude = models.DecimalField(max_digits=22, decimal_places=16, blank=True, null=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]
@@ -90,5 +92,5 @@ class User(AbstractUser, UUIDModel):
     def add_watermark(path):
         img = Image.open(path)
         watermark = Image.open(os.path.join("accounts", "watermark.webp"))
-        img.paste(watermark, (img.width-260, img.height-260), mask=watermark)
+        img.paste(watermark, (img.width - 260, img.height - 260), mask=watermark)
         img.save(path)

@@ -100,3 +100,4 @@ media/
 
 .env
 db.sqlite3
+my.cnf
