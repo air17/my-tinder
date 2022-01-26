@@ -5,3 +5,4 @@ Pillow~=9.0.0
 django-model-utils~=4.2.0
 uuid~=1.30
 mysqlclient~=2.1.0
+djangorestframework-simplejwt
