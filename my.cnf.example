@@ -1,7 +1,7 @@
 [client]
-host = 217.61.0.45
+host = ***
 port = 3306
-database = django-tinder
-user = tinder
-password = Tinder-2
+database = ***
+user = ***
+password = ***
 default-character-set = utf8
