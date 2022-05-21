@@ -1,0 +1,8 @@
+Django~=4.0.1
+django-filter~=21.1
+djangorestframework~=3.13.1
+Pillow~=9.0.0
+django-model-utils~=4.2.0
+uuid~=1.30
+mysqlclient~=2.1.0
+djangorestframework-simplejwt
