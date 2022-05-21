@@ -24,8 +24,3 @@ Backend for a Tinder-like app.
 5. Change user location `PUT clients/{id}/location/`
 6. Retrieve JWT `GET api/token` (you can use basic auth as well)
 7. Refresh JWT `GET api/token`
-
-## Test server
-
-https://mytinder.161e.tk
-
